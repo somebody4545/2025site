@@ -1,7 +1,7 @@
 "use client"
 
 import {RefObject, useEffect, useRef} from 'react';
-import {gsap} from 'gsap';
+import {motion} from 'framer-motion';
 import Link from 'next/link';
 
 interface AnimatedTextProps {
@@ -17,20 +17,17 @@ const AnimatedText = ({text}: AnimatedTextProps) => {
         const letters = textRef.current.querySelectorAll('.letter');
         letters.forEach((letter: Element) => {
             letter.addEventListener('mouseenter', () => {
-                gsap.to(letter, {scale: 1.2, duration: 0.3, ease: 'power1.inOut'});
+                letter.classList.add('hovered');
             });
-
             letter.addEventListener('mouseleave', () => {
-                gsap.to(letter, {scale: 1, duration: 0.3, ease: 'power1.inOut'});
+                letter.classList.remove('hovered');
             });
         });
 
         return () => {
             letters.forEach((letter: Element) => {
-                letter.removeEventListener('mouseenter', () => {
-                });
-                letter.removeEventListener('mouseleave', () => {
-                });
+                letter.removeEventListener('mouseenter', () => {});
+                letter.removeEventListener('mouseleave', () => {});
             });
         };
     }, []);
@@ -38,9 +35,14 @@ const AnimatedText = ({text}: AnimatedTextProps) => {
     return (
         <span ref={textRef}>
             {text.split('').map((char: string, index: number) => (
-                <span key={index} className="letter inline-block">
+                <motion.span
+                    key={index}
+                    className="letter inline-block"
+                    whileHover={{ scale: 1.2 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                >
                     {char}
-                </span>
+                </motion.span>
             ))}
         </span>
     );
